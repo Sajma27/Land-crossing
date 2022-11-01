@@ -16,6 +16,10 @@ public class CountryMapper {
     public HashMap<String, Country> readCountriesMap(URL url) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(url);
+        return readCountriesMap(jsonNode);
+    }
+
+    public HashMap<String, Country> readCountriesMap(JsonNode jsonNode) {
         HashMap<String, Country> countries = new HashMap<>();
         Iterator<JsonNode> nodes = jsonNode.elements();
         while (nodes.hasNext()) {
