@@ -1,11 +1,12 @@
 package com.test.crossing.core.model;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Country {
     private String cca3;
     private HashMap<String, Country> borders;
+    private List<String> route = null;
 
     public String getCca3() {
         return cca3;
@@ -21,5 +22,13 @@ public class Country {
 
     public void setBorders(HashMap<String, Country> borders) {
         this.borders = borders;
+    }
+
+    public List<String> getRoute() {
+        return route;
+    }
+
+    public void setRoute(List<String> route) {
+        this.route = route;
     }
 }

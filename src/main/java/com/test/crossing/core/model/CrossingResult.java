@@ -1,23 +1,20 @@
 package com.test.crossing.core.model;
 
-import java.util.LinkedList;
+import java.util.List;
 
 public class CrossingResult {
 
-    private LinkedList<String> route = new LinkedList<>();
+    private List<String> route;
 
-    public CrossingResult() {
-    }
-
-    public CrossingResult(LinkedList<String> route) {
+    public CrossingResult(List<String> route) {
         this.route = route;
     }
 
-    public LinkedList<String> getRoute() {
+    public List<String> getRoute() {
         return route;
     }
 
-    public void setRoute(LinkedList<String> route) {
+    public void setRoute(List<String> route) {
         this.route = route;
     }
 }

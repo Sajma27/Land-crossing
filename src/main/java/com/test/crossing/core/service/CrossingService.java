@@ -31,10 +31,16 @@ public class CrossingService {
         if (isOriginOrDestCountryInvalid(originCountry, destCountry)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
+        Deque<Country> countriesToCheck = new ArrayDeque<>();
         Set<String> visitedCca3 = new HashSet<>();
-        LinkedList<String> resultList = checkCountry(visitedCca3, originCountry, destCountry);
-        if (resultList != null) {
-            return new CrossingResult(resultList);
+        originCountry.setRoute(List.of(origin));
+        updateCountriesToCheck(originCountry, countriesToCheck, visitedCca3, destCountry);
+        while (!countriesToCheck.isEmpty()) {
+            Country nextCountry = countriesToCheck.removeFirst();
+            if (nextCountry.getCca3().equals(destCountry.getCca3())) {
+                return new CrossingResult(nextCountry.getRoute());
+            }
+            updateCountriesToCheck(nextCountry, countriesToCheck, visitedCca3, destCountry);
         }
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
     }
@@ -48,24 +54,21 @@ public class CrossingService {
                 originCountry.getBorders().size() < 1 || destCountry.getBorders().size() < 1;
     }
 
-    private LinkedList<String> checkCountry(Set<String> visitedCca3, Country country, Country destCountry) {
-        if (visitedCca3.contains(country.getCca3())) {
-            return null;
-        }
-        if (country.getCca3().equals(destCountry.getCca3())) {
-            LinkedList<String> destinationList = new LinkedList<>();
-            destinationList.add(destCountry.getCca3());
-            return destinationList;
-        }
-        visitedCca3.add(country.getCca3());
+    private void updateCountriesToCheck(Country country, Deque<Country> countriesToCheck, Set<String> visitedCca3, Country destCountry) {
         for (Country borderCountry : country.getBorders().values()) {
-            LinkedList<String> result = checkCountry(visitedCca3, borderCountry, destCountry);
-            if (result != null) {
-                result.addFirst(country.getCca3());
-                return result;
+            if (visitedCca3.contains(borderCountry.getCca3())) {
+                continue;
             }
+            if (destCountry.getBorders().containsKey(borderCountry.getCca3())) {
+                countriesToCheck.addFirst(borderCountry);
+            } else {
+                countriesToCheck.add(borderCountry);
+            }
+            visitedCca3.add(borderCountry.getCca3());
+            List<String> route = new ArrayList<>(List.copyOf(country.getRoute()));
+            route.add(borderCountry.getCca3());
+            borderCountry.setRoute(route);
         }
-        return null;
     }
 
 }
